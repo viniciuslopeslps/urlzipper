@@ -13,8 +13,6 @@ type RedisClient interface {
 	Get(ctx context.Context, key string) *redis.StringCmd
 }
 
-type redisClient struct{}
-
 func NewRedisClient(config *env.RedisConfig) RedisClient {
 	if config.UseMock {
 		return mocks.NewRedisMock()

@@ -5,8 +5,9 @@ import "time"
 func GetLocalEnv() *Environment {
 	return &Environment{
 		RedisConfig: RedisConfig{
-			UseMock: true,
+			UseMock: false,
 			TTL:     time.Hour * 24,
+			Address: "localhost:6379",
 		},
 	}
 }

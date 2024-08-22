@@ -3,15 +3,15 @@ package services
 import (
 	"github.com/alextanhongpin/base62"
 	"strconv"
-	"urlzipper/internal/v1/zipper/errors"
+	apiErrors "urlzipper/internal/v1/zipper/errors"
 	"urlzipper/internal/v1/zipper/mappers"
 	"urlzipper/internal/v1/zipper/models/dto"
 	"urlzipper/internal/v1/zipper/repositories"
 )
 
 type URLService interface {
-	Compress(req *dto.URLRequest) (*dto.URLResponse, errors.ApiError)
-	FindURL(hash string) (*dto.URLResponse, errors.ApiError)
+	Compress(req *dto.URLRequest) (*dto.URLResponse, apiErrors.ApiError)
+	FindURL(hash string) (*dto.URLResponse, apiErrors.ApiError)
 }
 
 type urlService struct {
@@ -26,7 +26,7 @@ func NewURLService(mapper mappers.URLMapper, repo repositories.URLRepository) UR
 	}
 }
 
-func (service *urlService) Compress(req *dto.URLRequest) (*dto.URLResponse, errors.ApiError) {
+func (service *urlService) Compress(req *dto.URLRequest) (*dto.URLResponse, apiErrors.ApiError) {
 	hash := base62.Decode(req.URL)
 
 	existent, err := service.repo.FindURL(strconv.FormatUint(hash, 10))
@@ -34,7 +34,7 @@ func (service *urlService) Compress(req *dto.URLRequest) (*dto.URLResponse, erro
 		return nil, err
 	}
 	if existent != nil {
-		return nil, errors.URLAlreadyExists
+		return nil, apiErrors.URLAlreadyExists
 	}
 
 	url := service.mapper.MapToURL(hash, req.URL)
@@ -46,10 +46,13 @@ func (service *urlService) Compress(req *dto.URLRequest) (*dto.URLResponse, erro
 	return service.mapper.MapToURLResponse(url), nil
 }
 
-func (service *urlService) FindURL(hash string) (*dto.URLResponse, errors.ApiError) {
+func (service *urlService) FindURL(hash string) (*dto.URLResponse, apiErrors.ApiError) {
 	urlResponse, err := service.repo.FindURL(hash)
 	if err != nil {
 		return nil, err
+	}
+	if urlResponse == nil {
+		return nil, apiErrors.URLNotFound
 	}
 
 	return service.mapper.MapToURLResponse(urlResponse), nil

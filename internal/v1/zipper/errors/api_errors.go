@@ -20,7 +20,7 @@ type apiErr struct {
 	ErrorMessage string    `json:"message"`
 	ErrorCode    string    `json:"error"`
 	ErrorStatus  int       `json:"status"`
-	ErrorCause   CauseList `json:"cause"`
+	ErrorCause   CauseList `json:"cause,omitempty"`
 }
 
 func (c CauseList) ToString() string {
@@ -117,6 +117,12 @@ var (
 		"The URL already exist",
 		"url_already_exist",
 		http.StatusConflict,
+		nil,
+	)
+	URLNotFound = NewApiError(
+		"The URL was not found",
+		"url_not_found",
+		http.StatusNotFound,
 		nil,
 	)
 	DatabaseCommunicationError = NewApiError(

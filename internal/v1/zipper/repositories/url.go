@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"encoding/json"
+	"github.com/redis/go-redis/v9"
 	"urlzipper/internal/configs/clients"
 	"urlzipper/internal/configs/env"
 	"urlzipper/internal/v1/zipper/errors"
@@ -38,6 +39,10 @@ func (repo *urlRepository) Save(url *entities.URL) errors.ApiError {
 func (repo *urlRepository) FindURL(hash string) (*entities.URL, errors.ApiError) {
 	resString, err := repo.redisClient.Get(context.Background(), hash).Result()
 	if err != nil {
+		if err == redis.Nil {
+			return nil, nil
+		}
+
 		return nil, errors.DatabaseCommunicationError
 	}
 

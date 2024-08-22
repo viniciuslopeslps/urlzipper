@@ -41,7 +41,7 @@ func (controller *urlController) Compress(c *gin.Context) {
 
 	res, err := controller.service.Compress(&req)
 	if err != nil {
-		_ = c.AbortWithError(err.Status(), err)
+		c.AbortWithStatusJSON(err.Status(), err)
 		return
 	}
 
@@ -60,7 +60,7 @@ func (controller *urlController) FindURL(c *gin.Context) {
 
 	res, err := controller.service.FindURL(hash)
 	if err != nil {
-		_ = c.AbortWithError(err.Status(), err)
+		c.AbortWithStatusJSON(err.Status(), err)
 		return
 	}
 
