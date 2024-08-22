@@ -10,6 +10,7 @@ import (
 
 type URLService interface {
 	Compress(req *dto.URLRequest) (*dto.URLResponse, errors.ApiError)
+	FindURL(hash *string) (*dto.URLResponse, errors.ApiError)
 }
 
 type urlService struct {
@@ -34,4 +35,13 @@ func (service *urlService) Compress(req *dto.URLRequest) (*dto.URLResponse, erro
 	}
 
 	return service.mapper.MapToURLResponse(url), nil
+}
+
+func (service *urlService) FindURL(hash *string) (*dto.URLResponse, errors.ApiError) {
+	urlResponse, err := service.repo.FindURL(hash)
+	if err != nil {
+		return nil, err
+	}
+
+	return service.mapper.MapToURLResponse(urlResponse), nil
 }

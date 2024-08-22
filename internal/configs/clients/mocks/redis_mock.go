@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -23,5 +24,9 @@ func (r RedisMock) Set(ctx context.Context, key string, value interface{}, expir
 }
 
 func (r RedisMock) Get(ctx context.Context, key string) *redis.StringCmd {
-	return redis.NewStringCmd(ctx, r.DB[key])
+	get := r.DB[key]
+	marshal, _ := json.Marshal(get)
+	cmd := redis.NewStringCmd(ctx, get)
+	cmd.SetVal(string(marshal))
+	return cmd
 }

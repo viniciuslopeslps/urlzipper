@@ -26,6 +26,7 @@ func (controller *urlController) Setup(c *gin.Engine) {
 	group := c.Group("/urlzipper/v1/urls")
 	{
 		group.POST("", controller.Compress)
+		group.GET("/:hash", controller.FindURL)
 	}
 }
 
@@ -33,7 +34,6 @@ func (controller *urlController) Compress(c *gin.Context) {
 	var req dto.URLRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		apiError := errors.NewBadRequestApiError("")
 		_ = c.AbortWithError(http.StatusBadRequest, apiError)
 		return
@@ -47,4 +47,22 @@ func (controller *urlController) Compress(c *gin.Context) {
 
 	c.JSON(http.StatusOK, res)
 	return
+}
+
+func (controller *urlController) FindURL(c *gin.Context) {
+	hash := c.Param("hash")
+
+	if hash == "" {
+		apiError := errors.NewBadRequestApiError("Invalid Hash Param")
+		_ = c.AbortWithError(http.StatusBadRequest, apiError)
+		return
+	}
+
+	res, err := controller.service.FindURL(&hash)
+	if err != nil {
+		_ = c.AbortWithError(err.Status(), err)
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }

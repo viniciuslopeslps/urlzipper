@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"encoding/json"
 	"urlzipper/internal/configs/clients"
 	"urlzipper/internal/configs/env"
 	"urlzipper/internal/v1/zipper/errors"
@@ -10,6 +11,7 @@ import (
 
 type URLRepository interface {
 	Save(url *entities.URL) errors.ApiError
+	FindURL(hash *string) (*entities.URL, errors.ApiError)
 }
 
 type urlRepository struct {
@@ -31,4 +33,20 @@ func (repo *urlRepository) Save(url *entities.URL) errors.ApiError {
 	}
 
 	return nil
+}
+
+func (repo *urlRepository) FindURL(hash *string) (*entities.URL, errors.ApiError) {
+	resString, err := repo.redisClient.Get(context.Background(), *hash).Result()
+	if err != nil {
+		return nil, errors.DatabaseCommunicationError
+	}
+
+	var res entities.URL
+	err = json.Unmarshal([]byte(resString), &res)
+	if err != nil {
+		return nil, errors.DatabaseCommunicationError
+	}
+
+	return &res, nil
+
 }
