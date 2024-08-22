@@ -1,6 +1,7 @@
 package env
 
 import (
+	"log/slog"
 	"strings"
 	"time"
 )
@@ -17,8 +18,10 @@ type Environment struct {
 
 func GetEnvConfig(scope string) *Environment {
 	if strings.ToLower(scope) == "prod" {
+		slog.Info("Using prod environment")
 		return GetProdEnv()
 	}
 
+	slog.Info("Using local environment")
 	return GetLocalEnv()
 }

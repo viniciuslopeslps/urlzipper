@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/alextanhongpin/base62"
+	"log/slog"
 	"strconv"
 	apiErrors "urlzipper/internal/v1/zipper/errors"
 	"urlzipper/internal/v1/zipper/mappers"
@@ -34,6 +35,7 @@ func (service *urlService) Compress(req *dto.URLRequest) (*dto.URLResponse, apiE
 		return nil, err
 	}
 	if existent != nil {
+		slog.Info("URL already exists", existent)
 		return nil, apiErrors.URLAlreadyExists
 	}
 
@@ -52,6 +54,7 @@ func (service *urlService) FindURL(hash string) (*dto.URLResponse, apiErrors.Api
 		return nil, err
 	}
 	if urlResponse == nil {
+		slog.Info("URL not found", hash)
 		return nil, apiErrors.URLNotFound
 	}
 
