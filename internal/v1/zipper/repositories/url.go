@@ -11,7 +11,7 @@ import (
 
 type URLRepository interface {
 	Save(url *entities.URL) errors.ApiError
-	FindURL(hash *string) (*entities.URL, errors.ApiError)
+	FindURL(hash string) (*entities.URL, errors.ApiError)
 }
 
 type urlRepository struct {
@@ -35,8 +35,8 @@ func (repo *urlRepository) Save(url *entities.URL) errors.ApiError {
 	return nil
 }
 
-func (repo *urlRepository) FindURL(hash *string) (*entities.URL, errors.ApiError) {
-	resString, err := repo.redisClient.Get(context.Background(), *hash).Result()
+func (repo *urlRepository) FindURL(hash string) (*entities.URL, errors.ApiError) {
+	resString, err := repo.redisClient.Get(context.Background(), hash).Result()
 	if err != nil {
 		return nil, errors.DatabaseCommunicationError
 	}

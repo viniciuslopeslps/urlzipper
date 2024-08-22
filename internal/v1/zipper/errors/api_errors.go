@@ -113,6 +113,12 @@ var (
 		http.StatusBadRequest,
 		nil,
 	)
+	URLAlreadyExists = NewApiError(
+		"The URL already exist",
+		"url_already_exist",
+		http.StatusConflict,
+		nil,
+	)
 	DatabaseCommunicationError = NewApiError(
 		"The database communication failed",
 		"database_communication_error",

@@ -58,7 +58,7 @@ func (controller *urlController) FindURL(c *gin.Context) {
 		return
 	}
 
-	res, err := controller.service.FindURL(&hash)
+	res, err := controller.service.FindURL(hash)
 	if err != nil {
 		_ = c.AbortWithError(err.Status(), err)
 		return
